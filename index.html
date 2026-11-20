@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TapinacCravings</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Inter:wght@500;600&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+/* ===== TapinacCravings – all styles ===== */
+:root {
+  --bg: #e9e4dc;
+  --card: #f4f1ec;
+  --ink: #2f2a25;
+  --muted: #8d857b;
+  --tan: #b58f63;
+  --green: #1b5c47;
+  --shadow-out: 8px 8px 18px rgba(120, 105, 85, .18), -6px -6px 14px rgba(255, 255, 255, .8);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Nunito", system-ui, sans-serif; background: var(--bg); color: var(--ink); }
+
+.app { max-width: 480px; margin: 0 auto; min-height: 100vh; padding: 20px 18px 110px; }
+
+.top { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+.round {
+  width: 42px; height: 42px; border-radius: 50%; border: 0; background: var(--card);
+  box-shadow: var(--shadow-out); font-size: 18px; color: var(--ink); cursor: pointer;
+  display: grid; place-items: center; text-decoration: none;
+}
+.top h1 { font-size: 26px; font-weight: 800; line-height: 1.15; flex: 1; }
+
+.search {
+  display: flex; align-items: center; gap: 10px; background: #ddd6cb; border-radius: 16px;
+  padding: 13px 16px; margin-bottom: 16px; box-shadow: inset 3px 3px 7px rgba(120,105,85,.18);
+}
+.search input { flex: 1; border: 0; background: none; font: inherit; font-size: 16px; color: var(--ink); outline: none; }
+.search input::placeholder { color: var(--muted); }
+
+.chips { display: flex; gap: 10px; overflow-x: auto; padding: 4px 2px 14px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  flex: none; border: 0; border-radius: 999px; padding: 10px 18px; font: inherit; font-weight: 700;
+  font-size: 15px; background: var(--card); color: var(--ink); box-shadow: var(--shadow-out); cursor: pointer;
+}
+.chip[aria-pressed="true"] { background: var(--tan); color: #fff; }
+
+.list { display: grid; gap: 18px; margin-top: 6px; }
+.place { background: var(--card); border-radius: 24px; padding: 12px; box-shadow: var(--shadow-out); }
+.art {
+  height: 140px; border-radius: 18px; display: grid; place-items: center; font-size: 64px; position: relative;
+}
+.heart {
+  position: absolute; top: 10px; right: 10px; width: 38px; height: 38px; border-radius: 50%; border: 0;
+  background: rgba(255,255,255,.85); font-size: 18px; cursor: pointer;
+}
+.info { display: flex; align-items: center; gap: 12px; padding: 12px 6px 4px; }
+.info div { flex: 1; }
+.info h2 { font-size: 18px; font-weight: 800; }
+.info p { font-size: 14px; color: var(--muted); margin-top: 2px; }
+.go {
+  border: 0; border-radius: 999px; background: var(--tan); color: #fff; font: inherit; font-weight: 800;
+  padding: 10px 20px; cursor: pointer;
+}
+.empty { text-align: center; color: var(--muted); padding: 30px 0; }
+
+.nav {
+  position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); width: min(444px, calc(100% - 24px));
+  display: flex; justify-content: space-around; background: var(--card); border-radius: 26px; padding: 10px;
+  box-shadow: var(--shadow-out);
+}
+.nav a {
+  display: grid; justify-items: center; gap: 2px; padding: 8px 18px; border-radius: 18px; font-size: 12px;
+  font-weight: 700; color: var(--muted); text-decoration: none;
+}
+.nav a span { font-size: 20px; }
+.nav a.on { background: var(--tan); color: #fff; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid var(--green); outline-offset: 2px; }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid .place { padding: 10px; }
+.grid .art { height: 110px; font-size: 48px; }
+.grid .info { padding: 10px 4px 2px; flex-direction: column; align-items: flex-start; gap: 6px; }
+.price { color: #3f8a5f; font-weight: 800; }
+.mapbox { border-radius: 22px; overflow: hidden; height: 260px; box-shadow: var(--shadow-out); margin-bottom: 18px; background: #ddd6cb; }
+.mapbox iframe { width: 100%; height: 100%; border: 0; }
+.detail { background: var(--card); border-radius: 22px; padding: 6px 18px; box-shadow: var(--shadow-out); margin-bottom: 18px; }
+.row { display: flex; gap: 14px; align-items: center; padding: 14px 0; }
+.row + .row { border-top: 1px solid #ddd6cb; }
+.row .ico { width: 40px; height: 40px; border-radius: 50%; background: #ddd6cb; display: grid; place-items: center; }
+.row small { display: block; color: var(--muted); font-size: 13px; }
+.row b { font-size: 16px; }
+.wide { display: block; width: 100%; text-align: center; text-decoration: none; padding: 16px; font-size: 17px; }
+
+[hidden] { display: none !important; }
+.nav { z-index: 10; }
+
+/* ===== Welcome screen (full-screen overlay) ===== */
+.w-screen {
+  position: fixed; inset: 0; z-index: 50; overflow-y: auto; display: flex;
+  font-family: "Noto Serif", Georgia, serif; color: var(--cream);
+  background: linear-gradient(180deg, var(--green-top) 0%, var(--green-mid) 45%, var(--green-bottom) 100%);
+}
+.w-inner {
+  position: relative; margin: auto; width: 100%; min-height: 100%; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 48px 20px;
+}
+.w-cta { display: inline-block; text-decoration: none; }
+:root {
+--green-top: #247a5c;
+--green-mid: #1b5c47;
+--green-bottom: #25503f;
+--gold: #f2b84b;
+--cream: #fdf6e3;
+--chip-bg: rgba(255, 255, 255, 0.08);
+--chip-border: rgba(255, 255, 255, 0.22);
+}
+
+
+
+
+
+
+
+
+
+/* faded floating food emojis */
+.w-float {
+position: absolute;
+font-size: 40px;
+opacity: 0.22;
+pointer-events: none;
+user-select: none;
+}
+.w-f1 { top: 8%;  left: 9%;  transform: rotate(-8deg); }
+.w-f2 { top: 9%;  left: 52%; transform: rotate(6deg); }
+.w-f3 { top: 27%; right: 6%; transform: rotate(10deg); }
+.w-f4 { top: 60%; left: 6%;  transform: rotate(-12deg); }
+.w-f5 { bottom: 12%; left: 38%; }
+.w-f6 { bottom: 17%; right: 6%; }
+
+.w-eyebrow {
+font-family: "Inter", sans-serif;
+font-size: 14px;
+font-weight: 500;
+letter-spacing: 0.3em;
+color: var(--gold);
+margin-bottom: 18px;
+}
+
+.w-screen h1 {
+font-size: clamp(40px, 11vw, 60px);
+line-height: 1.1;
+font-weight: 700;
+color: #fff;
+margin-bottom: 18px;
+}
+
+.w-question {
+font-style: italic;
+font-size: 20px;
+color: rgba(253, 246, 227, 0.9);
+margin-bottom: 30px;
+}
+
+.w-lead {
+max-width: 30ch;
+font-size: 24px;
+line-height: 1.6;
+margin-bottom: 36px;
+}
+
+.w-cta {
+display: inline-block;
+text-decoration: none;
+font-family: "Inter", sans-serif;
+font-size: 22px;
+font-weight: 600;
+color: #2b2b2b;
+background: var(--gold);
+border: 0;
+border-radius: 999px;
+padding: 20px 46px;
+cursor: pointer;
+box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.w-cta:hover { transform: translateY(-2px); box-shadow: 0 14px 28px rgba(0, 0, 0, 0.3); }
+.w-cta:active { transform: translateY(0); }
+.w-cta:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+
+.w-chips {
+display: flex;
+flex-wrap: wrap;
+justify-content: center;
+gap: 14px 14px;
+max-width: 460px;
+margin-top: 44px;
+list-style: none;
+}
+
+.w-chip {
+font-family: "Inter", sans-serif;
+font-size: 17px;
+font-weight: 500;
+color: var(--cream);
+background: var(--chip-bg);
+border: 1px solid var(--chip-border);
+border-radius: 999px;
+padding: 11px 22px;
+display: inline-flex;
+align-items: center;
+gap: 8px;
+cursor: pointer;
+transition: background 0.15s ease;
+}
+.w-chip:hover { background: rgba(255, 255, 255, 0.16); }
+
+/* ===== Welcome: white-to-cyan gradient ===== */
+.w-screen { background: linear-gradient(180deg, #ffffff 0%, #00bcd4 100%); color: #12343b; }
+.w-screen h1 { color: #0b2a30; }
+.w-eyebrow { color: #0a7f8f; }
+.w-question { color: #12343b; }
+.w-lead { color: #12343b; }
+.w-chip { color: #12343b; background: rgba(255,255,255,.6); border-color: rgba(0,0,0,.15); }
+.w-chip:hover { background: rgba(255,255,255,.9); }
+
+/* ===== Start exploring button: outline ===== */
+.w-cta { border: 3px solid #0b2a30; }
+
+/* ===== Map: photo strip (placeholders until you add real pictures) ===== */
+.photos-title { font-size: 18px; font-weight: 800; margin: 4px 4px 10px; }
+.photos { display: flex; gap: 12px; overflow-x: auto; padding: 4px 2px 16px; scrollbar-width: none; }
+.photos::-webkit-scrollbar { display: none; }
+.photo { flex: none; width: 150px; height: 130px; border-radius: 18px; position: relative; overflow: hidden;
+  display: grid; place-items: center; box-shadow: var(--shadow-out); }
+.photo span { font-size: 52px; }
+.photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.photo figcaption { position: absolute; left: 8px; bottom: 8px; background: rgba(255,255,255,.88);
+  padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+
+/* ===== Explore screen: white-to-lime gradient ===== */
+body[data-screen="explore"] { background: linear-gradient(180deg, #ffffff 0%, #a3e635 100%) fixed; min-height: 100vh; }
+
+/* ===== Fade-up animations ===== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Welcome screen: each part fades up one after another */
+.w-eyebrow  { animation: fadeUp .7s ease backwards; animation-delay: .05s; }
+.w-inner h1 { animation: fadeUp .7s ease backwards; animation-delay: .15s; }
+.w-question { animation: fadeUp .7s ease backwards; animation-delay: .30s; }
+.w-lead     { animation: fadeUp .7s ease backwards; animation-delay: .45s; }
+.w-cta      { animation: fadeUp .7s ease backwards; animation-delay: .60s; }
+.w-chips    { animation: fadeUp .7s ease backwards; animation-delay: .75s; }
+
+/* Explore / Favourites / Map: header, search, detail card, buttons */
+.app > :not(.chips):not(.list):not(.grid):not(.photos) { animation: fadeUp .55s ease backwards; }
+.app > :nth-child(1) { animation-delay: 0s; }
+.app > :nth-child(2) { animation-delay: .07s; }
+.app > :nth-child(3) { animation-delay: .14s; }
+.app > :nth-child(4) { animation-delay: .21s; }
+.app > :nth-child(5) { animation-delay: .28s; }
+.app > :nth-child(6) { animation-delay: .35s; }
+.app > :nth-child(7) { animation-delay: .42s; }
+
+/* Category / spot buttons */
+.app .chip { animation: fadeUp .5s ease backwards; }
+.chips .chip:nth-child(1) { animation-delay: .20s; }
+.chips .chip:nth-child(2) { animation-delay: .26s; }
+.chips .chip:nth-child(3) { animation-delay: .32s; }
+.chips .chip:nth-child(4) { animation-delay: .38s; }
+.chips .chip:nth-child(5) { animation-delay: .44s; }
+.chips .chip:nth-child(6) { animation-delay: .50s; }
+
+/* Restaurant cards (only when the list is shown or filtered) */
+.list.anim .place, .grid.anim .place {
+  animation: fadeUp .55s ease backwards;
+  animation-delay: calc(var(--i, 0) * 80ms + .25s);
+}
+
+/* Map photos */
+.photo { animation: fadeUp .5s ease backwards; }
+.photo:nth-child(1) { animation-delay: .05s; }
+.photo:nth-child(2) { animation-delay: .12s; }
+.photo:nth-child(3) { animation-delay: .19s; }
+.photo:nth-child(4) { animation-delay: .26s; }
+
+/* Bottom nav buttons */
+.nav a { animation: fadeUp .5s ease backwards; }
+.nav a:nth-child(1) { animation-delay: .35s; }
+.nav a:nth-child(2) { animation-delay: .42s; }
+.nav a:nth-child(3) { animation-delay: .49s; }
+
+/* Respect people who turn animations off on their phone */
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+</head>
+<body>
+
+<!-- ===== WELCOME ===== -->
+<section id="screen-welcome" class="w-screen">
+  <div class="w-inner">
+    <span class="w-float w-f1">🍛</span>
+    <span class="w-float w-f2">☕</span>
+    <span class="w-float w-f3">🧋</span>
+    <span class="w-float w-f4">🍕</span>
+    <span class="w-float w-f5">🍟</span>
+    <span class="w-float w-f6">🍲</span>
+
+    <p class="w-eyebrow">WELCOME!</p>
+    <h1>Welcome to<br>TapinacCravings</h1>
+    <p class="w-question">Are you a Student or just a regular customer?</p>
+    <p class="w-lead">Find the best meals, drinks, and meryenda at East Tapinac. Grab your seat and find your best spot to eat and rest.</p>
+    <a class="w-cta" href="#explore">Start exploring →</a>
+
+    <ul class="w-chips" id="welcome-chips">
+      <li><button class="w-chip" type="button" data-cat="Heavy meals">🍛 Heavy meals</button></li>
+      <li><button class="w-chip" type="button" data-cat="Drinks">🧋 Drinks</button></li>
+      <li><button class="w-chip" type="button" data-cat="Snacks">🍟 Snacks</button></li>
+      <li><button class="w-chip" type="button" data-cat="Home cooked">🍲 Home cooked</button></li>
+      <li><button class="w-chip" type="button" data-cat="Street Foods">🍢 Street Foods</button></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== EXPLORE ===== -->
+<div class="app" id="screen-explore" hidden>
+  <header class="top">
+    <a class="round" href="#welcome" aria-label="Back">←</a>
+    <h1>Find your<br>spot to eat!</h1>
+    <button class="round" type="button" aria-label="Notifications">🔔</button>
+  </header>
+  <label class="search">🔍<input id="explore-q" type="search" placeholder="Search food or place"></label>
+  <div class="chips" id="explore-chips">
+    <button class="chip" aria-pressed="true" data-cat="all">All</button>
+    <button class="chip" aria-pressed="false" data-cat="Heavy meals">🍛 Heavy meals</button>
+    <button class="chip" aria-pressed="false" data-cat="Drinks">🧋 Drinks</button>
+    <button class="chip" aria-pressed="false" data-cat="Snacks">🍟 Snacks</button>
+    <button class="chip" aria-pressed="false" data-cat="Home cooked">🍲 Home cooked</button>
+    <button class="chip" aria-pressed="false" data-cat="Street Foods">🍢 Street Foods</button>
+  </div>
+  <section class="list" id="explore-list" aria-live="polite"></section>
+</div>
+
+<!-- ===== FAVOURITES ===== -->
+<div class="app" id="screen-favourites" hidden>
+  <header class="top">
+    <a class="round" href="#explore" aria-label="Back">←</a>
+    <h1>Favourites</h1>
+  </header>
+  <label class="search">🔍<input id="fav-q" type="search" placeholder="Search your favourites"></label>
+  <p id="fav-count" style="color:var(--muted);margin:0 4px 14px"></p>
+  <section class="grid" id="fav-grid"></section>
+</div>
+
+<!-- ===== MAP ===== -->
+<div class="app" id="screen-map" hidden>
+  <header class="top">
+    <a class="round" href="#explore" aria-label="Back">←</a>
+    <h1>East Tapinac Map</h1>
+  </header>
+  <div class="mapbox">
+    <iframe title="Map of East Tapinac"
+      src="https://www.openstreetmap.org/export/embed.html?bbox=120.2790%2C14.8270%2C120.2890%2C14.8350&layer=mapnik"></iframe>
+  </div>
+  <div class="chips" id="map-chips"></div>
+  <div class="detail">
+    <div class="row"><div class="ico" id="map-icon"></div><div><b id="map-name"></b><small id="map-cat"></small></div></div>
+    <div class="row"><div class="ico">📍</div><div><small>Address</small><b id="map-addr"></b></div></div>
+    <div class="row"><div class="ico">💸</div><div><small>Price range</small><b id="map-price"></b></div></div>
+  </div>
+  <h3 class="photos-title">Photos</h3>
+  <div class="photos" id="map-photos"></div>
+  <a class="go wide" id="map-dir" target="_blank" rel="noopener">Get directions</a>
+</div>
+
+<!-- ===== BOTTOM NAV (hidden on welcome) ===== -->
+<nav class="nav" id="nav" hidden>
+  <a href="#explore"><span>🏠</span>Explore</a>
+  <a href="#map"><span>🗺️</span>Map</a>
+  <a href="#favourites"><span>❤️</span>Favourites</a>
+</nav>
+
+<script>
+/* ===== TapinacCravings – all behavior ===== */
+
+/* ---------- Data (edit your restaurants here) ---------- */
+const places = [
+  { name: "Aling Nena's Carinderia", cat: "Heavy meals", price: "₱60–120", area: "Rizal Ave", icon: "🍛", bg: "#e8d5b8",
+    // To use a real picture later: put the file in an "images" folder and set src: "images/alingnena-1.jpg"
+    photos: [
+      { emoji: "🏪", label: "Storefront", src: "" },
+      { emoji: "🍛", label: "Best seller", src: "" },
+      { emoji: "🍚", label: "Rice meals", src: "" }
+    ] },
+  { name: "Milk Tea Corner", cat: "Drinks", price: "₱45–90", area: "Near campus", icon: "🧋", bg: "#d9e3d4",
+    photos: [
+      { emoji: "🏪", label: "Shop", src: "" },
+      { emoji: "🧋", label: "Milk tea", src: "" },
+      { emoji: "🍹", label: "Fruit tea", src: "" }
+    ] },
+  { name: "Kanto Fries & Fishballs", cat: "Street Foods", price: "₱10–50", area: "East Tapinac", icon: "🍢", bg: "#ecd2c0",
+    photos: [
+      { emoji: "🛒", label: "Food stall", src: "" },
+      { emoji: "🍢", label: "Fishballs", src: "" },
+      { emoji: "🍟", label: "Fries", src: "" }
+    ] },
+  { name: "Meryenda Hub", cat: "Snacks", price: "₱30–80", area: "Gordon Ave", icon: "🍟", bg: "#efe1b8",
+    photos: [
+      { emoji: "🏪", label: "Storefront", src: "" },
+      { emoji: "🍟", label: "Fries", src: "" },
+      { emoji: "🍩", label: "Sweet snacks", src: "" }
+    ] },
+  { name: "Bahay Luto", cat: "Home cooked", price: "₱80–150", area: "East Tapinac", icon: "🍲", bg: "#d6d9e2",
+    photos: [
+      { emoji: "🏠", label: "The place", src: "" },
+      { emoji: "🍲", label: "Soup of the day", src: "" },
+      { emoji: "🥘", label: "Ulam", src: "" }
+    ] }
+];
+
+/* ---------- Favourites storage ---------- */
+function loadFavs() {
+  try { return new Set(JSON.parse(localStorage.getItem("tc-favs") || "[]")); }
+  catch (e) { return new Set(); }
+}
+function saveFavs() {
+  try { localStorage.setItem("tc-favs", JSON.stringify([...faved])); } catch (e) {}
+}
+const faved = loadFavs();
+const $ = id => document.getElementById(id);
+
+/* ---------- Explore ---------- */
+let cat = "all";
+
+function renderExplore(animate = false) {
+  const term = $("explore-q").value.trim().toLowerCase();
+  const shown = places.filter(p =>
+    (cat === "all" || p.cat === cat) &&
+    (p.name + " " + p.cat + " " + p.area).toLowerCase().includes(term));
+  $("explore-list").classList.toggle("anim", animate);   // fade-up only when asked
+  $("explore-list").innerHTML = shown.length ? shown.map((p, i) => `
+    <article class="place" style="--i:${i}">
+      <div class="art" style="background:${p.bg}">${p.icon}
+        <button class="heart" data-name="${p.name}" aria-label="Favourite">${faved.has(p.name) ? "❤️" : "🤍"}</button>
+      </div>
+      <div class="info">
+        <div><h2>${p.name}</h2><p>${p.cat} · ${p.price} · ${p.area}</p></div>
+        <button class="go" data-name="${p.name}">View</button>
+      </div>
+    </article>`).join("")
+    : '<p class="empty">No spots match yet. Try another search.</p>';
+}
+
+function setCategory(value) {
+  cat = value;
+  $("explore-chips").querySelectorAll(".chip").forEach(c =>
+    c.setAttribute("aria-pressed", c.dataset.cat === value));
+  renderExplore(true);
+}
+
+$("explore-chips").addEventListener("click", e => {
+  const b = e.target.closest(".chip");
+  if (b) setCategory(b.dataset.cat);
+});
+$("explore-list").addEventListener("click", e => {
+  const h = e.target.closest(".heart");
+  if (h) {
+    faved.has(h.dataset.name) ? faved.delete(h.dataset.name) : faved.add(h.dataset.name);
+    saveFavs();
+    renderExplore();
+    return;
+  }
+  const v = e.target.closest(".go");       // "View" opens that spot on the map
+  if (v) {
+    showSpot(places.findIndex(p => p.name === v.dataset.name));
+    go("map");
+  }
+});
+$("explore-q").addEventListener("input", () => renderExplore());
+
+/* Welcome chips jump to Explore with that category */
+$("welcome-chips").addEventListener("click", e => {
+  const b = e.target.closest(".w-chip");
+  if (!b) return;
+  setCategory(b.dataset.cat);
+  go("explore");
+});
+
+/* ---------- Favourites ---------- */
+function renderFavs(animate = false) {
+  const term = $("fav-q").value.trim().toLowerCase();
+  const shown = places.filter(p => faved.has(p.name) && (p.name + p.cat).toLowerCase().includes(term));
+  $("fav-count").textContent = faved.size + " saved spots";
+  $("fav-grid").classList.toggle("anim", animate);
+  $("fav-grid").innerHTML = shown.length ? shown.map((p, i) => `
+    <article class="place" style="--i:${i}">
+      <div class="art" style="background:${p.bg}">${p.icon}</div>
+      <div class="info">
+        <h2 style="font-size:15px">${p.name}
