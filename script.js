@@ -39,7 +39,7 @@ const places = [
     ] },
   { name: "Jeco's Café", cat: "Drinks", price: "₱45–90", area: "Near campus", icon: "🧋", bg: "#d9e3d4",
     thumb: IMG + "Jeco_Cafe.jpg",          // picture shown on the Explore card (instead of the emoji)
-    student: true,  deal: "Student deal: ₱10 off with school ID", hours: ["10:00", "22:00"],
+    student: true,  deal: "Student deal: ₱10 off with school ID", hours: ["08:00", "22:00"],
     photos: [
       { emoji: "🏪", label: "Shop", src: IMG + "Jeco_Cafe.jpg" },
       { emoji: "🧋", label: "Milk tea", src: IMG + "Milktea.jpg" },
@@ -49,7 +49,7 @@ const places = [
     ] },
   { name: "Meryenda Hub", cat: "Snacks", price: "₱30–80", area: "Gordon Ave", icon: "🍟", bg: "#efe1b8",
     thumb: IMG + "Foodstall.jpg",
-    student: true,  deal: "Student deal: snack + drink combo",   hours: ["09:00", "21:00"],
+    student: true,  deal: "Student deal: snack + drink combo",   hours: ["09:00", "20:00"],
     photos: [
       { emoji: "🛒", label: "Food stall", src: IMG + "Foodstall.jpg" },
       { emoji: "🍢", label: "Isaw", src: IMG + "Isaw.jpg" },
