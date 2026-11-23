@@ -14,7 +14,7 @@ window.addEventListener("error", e => {
 const IMG = "";
 
 const places = [
-  { name: "Aling Nena's Carinderia", cat: "Heavy meals", price: "₱40–100", area: "Rizal Ave", icon: "🍛", bg: "#e8d5b8",
+  { name: "Jempay's Foodlab", cat: "Heavy meals", price: "₱40–100", area: "Rizal Ave", icon: "🍛", bg: "#e8d5b8",
     thumb: IMG + "Jempay_Card.jpg",          // Jempay FoodLab logo shown on the Explore card
     student: true,  deal: "Student deal: Student meal starts at ₱50-60 with free soup refills",   hours: ["06:00", "20:00"],
     photos: [
@@ -30,9 +30,9 @@ const places = [
       { emoji: "🥩", label: "Sisig ₱80", src: IMG + "Sisig.jpg" },
       { emoji: "🍛", label: "Dinuguan ₱70", src: IMG + "Dinuguan.jpg" }
     ] },
-  { name: "Milk Tea Corner", cat: "Drinks", price: "₱45–90", area: "Near campus", icon: "🧋", bg: "#d9e3d4",
+  { name: "Jeco's Café", cat: "Drinks", price: "₱45–90", area: "Near campus", icon: "🧋", bg: "#d9e3d4",
     thumb: IMG + "Jeco_Cafe.jpg",          // picture shown on the Explore card (instead of the emoji)
-    student: true,  deal: "Student deal: ₱10 off with school ID", hours: ["10:00", "22:00"],
+    student: true,  deal: "Student deal: ₱10 off with school ID", hours: ["08:00", "22:00"],
     photos: [
       { emoji: "🏪", label: "Shop", src: IMG + "Jeco_Cafe.jpg" },
       { emoji: "🧋", label: "Milk tea", src: IMG + "Milktea.jpg" },
@@ -68,11 +68,11 @@ const places = [
    dir      = where "Get directions" sends people (a name + address, or coordinates)
    addr     = the address shown on the page */
 const MAPDATA = {
-  "Aling Nena's Carinderia": {          // Jempay FoodLab  (pin coordinates still needed)
+  "Jempay's Foodlab": {          // Jempay FoodLab  (pin coordinates still needed)
     dir: "Jempay FoodLab, 1390 Rizal, Olongapo City, 2200 Zambales",
     addr: "1390 Rizal Ave, East Tapinac, Olongapo City"
   },
-  "Milk Tea Corner": {                  // Jeco's Café  (pin is approximate)
+  "Jeco's Café": {                  // Jeco's Café  (pin is approximate)
     lat: 14.831665, lng: 120.282532,
     dir: "Jeco's Café, 29 Bacon St, Olongapo City, Zambales",
     addr: "29 Bacon St, East Tapinac, Olongapo City"
