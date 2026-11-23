@@ -87,7 +87,7 @@ const MAPDATA = {
   },
   "Weirdos Café": {                     // pin dropped beside WEIRDOS on E 14th St
     lat: 14.832211, lng: 120.286414,
-    dir: "14.832211,120.286414",
+    dir: "14.832168,120.286405",
     addr: "E 14th St, near Irving St, Olongapo City"
   },
   "Meryenda Hub": {                     // pin dropped on the food stall's spot
