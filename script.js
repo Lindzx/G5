@@ -1,4 +1,4 @@
-/* ---------- Show any JavaScript error on screen (helps find problems on phones) ---------- */
+    /* ---------- Show any JavaScript error on screen (helps find problems on phones) ---------- */
 window.addEventListener("error", e => {
   const d = document.createElement("div");
   d.style.cssText = "position:fixed;left:0;right:0;top:0;z-index:999;background:#b00020;color:#fff;font:13px/1.4 sans-serif;padding:8px 12px";
@@ -12,6 +12,13 @@ window.addEventListener("error", e => {
 // Folder that holds your pictures (next to index.html). If you put the pictures beside index.html instead,
 // change this to: const IMG = "";
 const IMG = "";
+
+// If a picture file is missing or fails to load, show the emoji instead of a broken image
+function imgFail(img, emoji) {
+  const s = document.createElement("span");
+  s.textContent = emoji;
+  img.replaceWith(s);
+}
 
 const places = [
   { name: "Jempay's Foodlab", cat: "Heavy meals", price: "₱40–100", area: "Rizal Ave", icon: "🍛", bg: "#e8d5b8",
@@ -32,7 +39,7 @@ const places = [
     ] },
   { name: "Jeco's Café", cat: "Drinks", price: "₱45–90", area: "Near campus", icon: "🧋", bg: "#d9e3d4",
     thumb: IMG + "Jeco_Cafe.jpg",          // picture shown on the Explore card (instead of the emoji)
-    student: true,  deal: "Student deal: ₱10 off with school ID", hours: ["08:00", "22:00"],
+    student: true,  deal: "Student deal: ₱10 off with school ID", hours: ["10:00", "22:00"],
     photos: [
       { emoji: "🏪", label: "Shop", src: IMG + "Jeco_Cafe.jpg" },
       { emoji: "🧋", label: "Milk tea", src: IMG + "Milktea.jpg" },
@@ -139,7 +146,7 @@ function renderExplore(animate = false) {
   $("explore-list").classList.toggle("anim", animate);   // fade-up only when asked
   $("explore-list").innerHTML = shown.length ? shown.map((p, i) => `
     <article class="place" style="--i:${i}">
-      <div class="art" style="background:${p.bg}">${p.thumb ? `<img class="thumb" src="${p.thumb}" alt="${p.name}">` : p.icon}
+      <div class="art" style="background:${p.bg}">${p.thumb ? `<img class="thumb" src="${p.thumb}" alt="${p.name}" onerror="imgFail(this, '${p.icon}')">` : p.icon}
         ${student && p.student ? '<span class="badge">🎓 Student pick</span>' : ""}
         <button class="heart" data-name="${p.name}" aria-label="Favourite">${faved.has(p.name) ? "❤️" : "🤍"}</button>
       </div>
@@ -206,7 +213,7 @@ function renderFavs(animate = false) {
   $("fav-grid").classList.toggle("anim", animate);
   $("fav-grid").innerHTML = shown.length ? shown.map((p, i) => `
     <article class="place" style="--i:${i}">
-      <div class="art" style="background:${p.bg}">${p.thumb ? `<img class="thumb" src="${p.thumb}" alt="${p.name}">` : p.icon}</div>
+      <div class="art" style="background:${p.bg}">${p.thumb ? `<img class="thumb" src="${p.thumb}" alt="${p.name}" onerror="imgFail(this, '${p.icon}')">` : p.icon}</div>
       <div class="info">
         <h2 style="font-size:15px">${p.name}</h2>
         <span class="price">${p.price}</span>
@@ -265,7 +272,7 @@ function showSpot(i) {
   // Photos: shows the real image if "src" is filled in, otherwise the emoji placeholder
   $("map-photos").innerHTML = p.photos.map((ph, i) => `
     <figure class="photo" style="background:${p.bg}; animation-delay:${(0.05 + i * 0.07).toFixed(2)}s">
-      ${ph.src ? `<img src="${ph.src}" alt="${ph.label}">` : `<span>${ph.emoji}</span>`}
+      ${ph.src ? `<img src="${ph.src}" alt="${ph.label}" onerror="imgFail(this, '${ph.emoji}')">` : `<span>${ph.emoji}</span>`}
       <figcaption>${ph.label}</figcaption>
     </figure>`).join("");
 }
@@ -344,3 +351,4 @@ window.addEventListener("hashchange", () => show(hashName()));
 showSpot(0);
 setType(userType);
 show(hashName());
+
