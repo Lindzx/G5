@@ -39,7 +39,7 @@ const places = [
     ] },
   { name: "Jeco's Café", cat: "Drinks", price: "₱45–90", area: "Near campus", icon: "🧋", bg: "#d9e3d4",
     thumb: IMG + "Jeco_Cafe.jpg",          // picture shown on the Explore card (instead of the emoji)
-    student: true,  deal: "Student deal: ₱10 off with school ID", hours: ["08:00", "22:00"],
+    student: true,  deal: "Student deal: ₱10 off with school ID", hours: ["10:00", "22:00"],
     photos: [
       { emoji: "🏪", label: "Shop", src: IMG + "Jeco_Cafe.jpg" },
       { emoji: "🧋", label: "Milk tea", src: IMG + "Milktea.jpg" },
@@ -49,7 +49,7 @@ const places = [
     ] },
   { name: "Meryenda Hub", cat: "Snacks", price: "₱30–80", area: "Gordon Ave", icon: "🍟", bg: "#efe1b8",
     thumb: IMG + "Foodstall.jpg",
-    student: true,  deal: "Student deal: snack + drink combo",   hours: ["09:00", "20:00"],
+    student: true,  deal: "Student deal: snack + drink combo",   hours: ["09:00", "21:00"],
     photos: [
       { emoji: "🛒", label: "Food stall", src: IMG + "Foodstall.jpg" },
       { emoji: "🍢", label: "Isaw", src: IMG + "Isaw.jpg" },
@@ -59,7 +59,7 @@ const places = [
       { emoji: "🍟", label: "Hash browns", src: IMG + "Hash_browns.jpg" },
       { emoji: "🥤", label: "Gulaman", src: IMG + "Gulaman.jpg" }
     ] },
-  { name: "Weirdos Café", cat: "Drinks", price: "₱100–200", area: "Olongapo City", icon: "☕", bg: "#e6dccf",
+  { name: "Weirdos Café", cat: "Drinks", price: "₱100–200", area: "E 14th St", icon: "☕", bg: "#e6dccf",
     thumb: IMG + "Weirdos_Card.jpg",
     student: false, deal: "",   hours: ["08:00", "20:00"],      // hours are a placeholder - replace with the real ones
     photos: [
@@ -75,7 +75,8 @@ const places = [
    dir      = where "Get directions" sends people (a name + address, or coordinates)
    addr     = the address shown on the page */
 const MAPDATA = {
-  "Jempay's Foodlab": {          // Jempay FoodLab  (pin coordinates still needed)
+  "Jempay's Foodlab": {          // Jempay FoodLab
+    lat: 14.834358, lng: 120.281507,
     dir: "Jempay FoodLab, 1390 Rizal, Olongapo City, 2200 Zambales",
     addr: "1390 Rizal Ave, East Tapinac, Olongapo City"
   },
@@ -84,9 +85,10 @@ const MAPDATA = {
     dir: "Jeco's Café, 29 Bacon St, Olongapo City, Zambales",
     addr: "29 Bacon St, East Tapinac, Olongapo City"
   },
-  "Weirdos Café": {                     // add lat, lng and the real address when you have the pin
-    dir: "Weirdos Café, Olongapo City",
-    addr: "Olongapo City (exact address coming soon)"
+  "Weirdos Café": {                     // pin dropped beside WEIRDOS on E 14th St
+    lat: 14.832211, lng: 120.286414,
+    dir: "14.832211,120.286414",
+    addr: "E 14th St, near Irving St, Olongapo City"
   },
   "Meryenda Hub": {                     // pin dropped on the food stall's spot
     lat: 14.831737, lng: 120.282609,
