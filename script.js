@@ -87,7 +87,7 @@ const MAPDATA = {
   },
   "Weirdos Café": {                     // pin dropped beside WEIRDOS on E 14th St
     lat: 14.832211, lng: 120.286414,
-    dir: "14.832168,120.286405",
+    dir: "14.832211,120.286414",
     addr: "E 14th St, near Irving St, Olongapo City"
   },
   "Meryenda Hub": {                     // pin dropped on the food stall's spot
@@ -353,4 +353,23 @@ window.addEventListener("hashchange", () => show(hashName()));
 showSpot(0);
 setType(userType);
 show(hashName());
+
+/* ---------- Photo strip: arrow buttons + drag with the mouse (for laptop / PC) ---------- */
+(function () {
+  const strip = $("map-photos"), title = document.querySelector(".photos-title");
+  title.innerHTML = '<span>Photos</span><span class="arrows">' +
+    '<button type="button" data-dir="-1" aria-label="Previous photos">‹</button>' +
+    '<button type="button" data-dir="1" aria-label="Next photos">›</button></span>';
+  title.addEventListener("click", e => {
+    const b = e.target.closest("button");
+    if (b) strip.scrollBy({ left: b.dataset.dir * strip.clientWidth * 0.8, behavior: "smooth" });
+  });
+  let down = false, startX = 0, startLeft = 0;
+  strip.addEventListener("pointerdown", e => {
+    if (e.pointerType !== "mouse") return;       // touch screens already swipe
+    down = true; startX = e.clientX; startLeft = strip.scrollLeft; strip.classList.add("dragging");
+  });
+  window.addEventListener("pointermove", e => { if (down) strip.scrollLeft = startLeft - (e.clientX - startX); });
+  window.addEventListener("pointerup", () => { down = false; strip.classList.remove("dragging"); });
+})();
 

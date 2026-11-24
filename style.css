@@ -391,3 +391,18 @@ body.fx .photo:nth-child(5) { animation-delay: .33s; }
 .w-f4 { --r: -12deg; animation-duration: 5.4s; animation-delay: -0.6s; }
 .w-f5 { --r: 0deg;   animation-duration: 4.0s; animation-delay: -3.0s; }
 .w-f6 { --r: 0deg;   animation-duration: 5.2s; animation-delay: -1.8s; }
+
+/* ===== Map photo strip: scrolling with a mouse (laptop / PC) ===== */
+.photos-title { display: flex; justify-content: space-between; align-items: center; }
+.photos-title .arrows button {
+  width: 36px; height: 36px; margin-left: 8px; border: 0; border-radius: 50%; cursor: pointer;
+  background: var(--card); color: var(--ink); font-size: 22px; line-height: 1; box-shadow: var(--shadow-out);
+}
+.photos-title .arrows button:active { transform: scale(.94); }
+.photos { cursor: grab; }
+.photos.dragging { cursor: grabbing; user-select: none; }
+.photos img { -webkit-user-drag: none; user-select: none; }
+@media (hover: hover) and (pointer: fine) {      /* mouse devices: show a scrollbar */
+  .photos { scrollbar-width: thin; scrollbar-color: var(--tan) transparent; }
+}
+@media (hover: none) { .photos-title .arrows { display: none; } }   /* phones/tablets just swipe */
